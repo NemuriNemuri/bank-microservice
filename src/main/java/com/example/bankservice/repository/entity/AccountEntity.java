@@ -32,7 +32,7 @@ public class AccountEntity {
 
     @Setter
 	@Getter
-    private Double availableBalance = 0.0;
+    private Double availableBalance = 500.0;
 
     @ManyToOne
     @JoinColumn(name = "customer_number")

@@ -33,4 +33,25 @@ public class GlobalExceptionHandler {
         // return error response
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+	
+	/**
+	 * handle exception for customer not found
+	 * @param ex
+	 * @return
+	 */
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<ErrorResponseDto> handleNotFound(RuntimeException ex) {
+
+	    if (ex.getMessage().equals("Customer not found")) {
+	        return new ResponseEntity<>(
+	                new ErrorResponseDto(401, "Customer not found"),
+	                HttpStatus.UNAUTHORIZED
+	        );
+	    }
+
+	    return new ResponseEntity<>(
+	            new ErrorResponseDto(400, ex.getMessage()),
+	            HttpStatus.BAD_REQUEST
+	    );
+	}
 }

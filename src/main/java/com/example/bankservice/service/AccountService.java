@@ -1,10 +1,14 @@
 package com.example.bankservice.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.bankservice.dto.AccountCreationRequestDto;
 import com.example.bankservice.dto.AccountCreationResponseDto;
+import com.example.bankservice.dto.AccountDetailsDto;
+import com.example.bankservice.dto.CustomerInquiryResponseDto;
 import com.example.bankservice.repository.AccountRepository;
 import com.example.bankservice.repository.CustomerRepository;
 import com.example.bankservice.repository.entity.AccountEntity;
@@ -56,6 +60,41 @@ public class AccountService {
                 customer.getCustomerNumber(),
                 201,
                 "Customer account created"
+        );
+    }
+    
+    /**
+     * Customer inquiry for get request
+     * @param customerNumber
+     * @return response for customer inquiry
+     */
+    public CustomerInquiryResponseDto getCustomer(Long customerNumber) {
+
+    	// new customer entity
+        CustomerEntity customer = customerRepository.findById(customerNumber)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        // list of customer accounts
+        List<AccountDetailsDto> accounts = customer.getAccounts()
+                .stream()
+                .map(account -> new AccountDetailsDto(
+                        account.getAccountNumber(),
+                        account.getAccountType().name().equals("S") ? "Savings" : "Checking",
+                        account.getAvailableBalance()
+                ))
+                .toList();
+
+        // return customer details and accounts
+        return new CustomerInquiryResponseDto(
+                customer.getCustomerNumber(),
+                customer.getCustomerName(),
+                customer.getCustomerMobile(),
+                customer.getCustomerEmail(),
+                customer.getAddress1(),
+                customer.getAddress2(),
+                accounts,
+                302,
+                "Customer Account found"
         );
     }
 }
